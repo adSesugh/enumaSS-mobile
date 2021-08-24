@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "enumaSS",
+    "slug": "enumaSS",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "enumaSS"
+}
