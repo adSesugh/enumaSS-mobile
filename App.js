@@ -1,21 +1,32 @@
+import React, {useEffect} from 'react'
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as Updates from 'expo-status-bar';
+import { Colors} from 'react-native-ui-lib'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import Navigation from './src/navigation'
 
 export default function App() {
+  // const checkForNewVersion = async() => {
+  //   try {
+  //     const update = await Updates.checkForUpdateAsync()
+  //     if(update.isAvailable) {
+  //       await Updates.fetchUpdateAsync()
+  //       Updates.reloadAsync()
+  //     }
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   checkForNewVersion()
+  // }, [])
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      <StatusBar style="light" barStyle={Colors.green30} backgroundColor={Colors.green20} />
+      <Navigation />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

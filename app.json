@@ -2,10 +2,39 @@
   "expo": {
     "name": "enumaSS",
     "slug": "enumaSS",
-    "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splashx.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff",
+      "ldpi": "./assets/splashx.png",
+      "mdpi": "./assets/splashx.png",
+      "hdpi": "./assets/splashx.png",
+      "xhdpi": "./assets/splashx.png",
+      "xxhdpi": "./assets/splashx.png",
+      "xxxhdpi": "./assets/splashx.png",
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "io.ngrok.enumastore"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "io.ngrok.enumastore"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "description": "Enuma Stationery Store"
+    }
   },
   "name": "enumaSS"
 }
