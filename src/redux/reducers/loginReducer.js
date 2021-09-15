@@ -1,10 +1,11 @@
 import { 
     LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILED,
-    LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED
+    LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED, SET_BASEURL
  } from '../constants'
 
 const initialState = {
   token: null,
+  baseURL: null,
   isAdmin: null,
   loading: false,
   error: null
@@ -12,6 +13,12 @@ const initialState = {
 
 const loginReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_BASEURL:
+        return { 
+            ...state,
+            baseURL: action.payload
+        };
+
     case LOGIN_REQUEST:
         return { 
             ...state, 

@@ -205,6 +205,7 @@ const NewOrderScreen = ({navigation}) => {
 
     const onSubmit = async (type) => {
         setDisabled(true)
+        setXDisabled(true)
 
         let formData = new FormData()
         formData.append('client_id', client?.value)
@@ -223,8 +224,6 @@ const NewOrderScreen = ({navigation}) => {
         }
 
         const orderTotal = totalSum();
-
-        console.log(formData)
 
         await axios
           .get(`/orderEligibility?client_id=${client?.value}&orderTotal=${orderTotal}`, {

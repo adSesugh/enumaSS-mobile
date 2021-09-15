@@ -2,7 +2,7 @@ import axios from '../api'
 import {store} from '../store'
 import { 
   LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILED,
-  LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED
+  LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED, SET_BASEURL
  } from '../constants'
 
 export const userLogin = (data) => {
@@ -44,5 +44,22 @@ export const userLogOut = (data) => {
           })
         }
       }).catch(err => console.error(err));
+  }
+}
+
+export const saveBaseURL = (value) => {
+  return dispatch => {
+    if(value) {
+        dispatch({
+          type: 'SET_BASEURL',
+          payload: 'http://enumastore.ngrok.io/api'
+        })
+    }
+    else {
+        dispatch({
+          type: 'SET_BASEURL',
+          payload: 'http://192.168.1.58:8000/api'
+        })
+    }   
   }
 }

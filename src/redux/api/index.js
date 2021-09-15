@@ -1,10 +1,10 @@
 import axios from 'axios'
+import {store} from '../store'
+
+const baseUrl = store.getState().loginReducer.baseURL;
 
 const instance = axios.create({
-    baseURL: 'http://192.168.101.88:8000/api',
-    //baseURL: 'http://192.168.1.77:8000/api',
-    //baseURL: 'http://192.168.1.192/api',
-    //baseURL: 'http://enumastore.ngrok.io/api',
+    baseURL: baseUrl,
     timeout: 10000
 })
 

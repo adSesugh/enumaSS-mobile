@@ -1,13 +1,13 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Alert, Image, TextInput, StyleSheet} from 'react-native'
-import { Card, Colors, View, Text, Button, TextField} from 'react-native-ui-lib'
+import { Card, Colors, View, Text, Button, Switch, TextField} from 'react-native-ui-lib'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useForm, Controller } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
-import { userLogin } from '../redux/actions/login.action'
+import { userLogin, saveBaseURL } from '../redux/actions/login.action'
 import {Ionicons, AntDesign} from '@expo/vector-icons'
 import Loader from '../components/Loader'
-import ToastMsg from '../components/ToastMsg';
+import ToastMsg from '../components/ToastMsg'
 
 import Logo from '../../assets/ess.png'
 
@@ -17,15 +17,19 @@ const LoginScreen = () => {
     const dispatch = useDispatch()
     const [message, setMessage] = useState(error)
     const [openDialog, setOpenDialog] = useState(false)
+    const [urlState, setUrlState] = useState(false)
+
+    const baseURL = (value) => {
+        dispatch(saveBaseURL(value))
+    }
+    useEffect(()=> {
+        baseURL(urlState)
+    }, [])
 
     const onChange = arg => {
         return {
             value: arg.nativeEvent.text
         }
-    }
-
-    if(error) {
-        setOpenDialog(true)
     }
 
     const onSubmit = async (data) => await dispatch(userLogin(data));
@@ -76,6 +80,25 @@ const LoginScreen = () => {
                                 name="password"
                                 defaultValue=""
                             />
+                            <View spread row marginT-s2>
+                                <View right flex-2>
+                                    <Text text80 white>Local</Text>
+                                </View>
+                               <View flex-2 center>
+                                    <Switch
+                                        onColor={Colors.green10}
+                                        offColor={Colors.dark10}
+                                        value={urlState}
+                                        onValueChange={(v: boolean) => {
+                                            setUrlState(v)
+                                            baseURL(v)
+                                        }}
+                                    />
+                               </View>
+                                <View flex-2 left>
+                                    <Text text80 white>Online</Text>
+                                </View>
+                            </View>
                             <Button style={styles.button} label="Let's Go" onPress={handleSubmit(onSubmit)} iconOnRight={<AntDesign name="login" color="white" size="20" />} />
                         </Card>
                     </View>

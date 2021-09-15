@@ -17,20 +17,20 @@ const OrderScreen = () => {
 
     const _loadData = async () => await dispatch(getOrders());
 
-    useEffect(() => {
-        _loadData()
-    }, [])
+    // useEffect(() => {
+    //     _loadData()
+    // }, [])
 
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         let isActive = true;
-    //         _loadData()
+    useFocusEffect(
+        useCallback(() => {
+            let isActive = true;
+            _loadData()
 
-    //         return () => {
-    //             isActive = false;
-    //         };
-    //     }, [])
-    // );
+            return () => {
+                isActive = false;
+            };
+        }, [])
+    );
 
     const addRef = (ref, index) => {
         refArray[index] = ref;
