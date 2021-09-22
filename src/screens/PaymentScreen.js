@@ -7,7 +7,8 @@ import {Button, Card, Colors, DateTimePicker, View, Text, TextField} from 'react
 import {useSelector} from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 
-import axios from '../redux/api';
+//import axios from '../redux/api';
+import axios from 'axios';
 
 
 const paymentMode = [
@@ -21,27 +22,36 @@ const PaymentScreen = ({navigation, route}) => {
     const [mode, setMode] = useState(null);
     const [bank, setBank] = useState(null);
     const [form, setForm] = useState(null);
+    const [clientType, setClientType] = useState(0);
     const [nameOnTransfer, setNameOnTransfer] = useState(null);
     const [referenceCode, setReferenceCode] = useState(null);
     const [document, setDocument] = useState(null);
     const [amountApplied, setAmountApplied] = useState(0.0);
     const [amountExpected, setAmountExpected] = useState(0.0);
     const [surge, setSurge] = useState(0.0);
+    const [total, setTotal] = useState(0.0);
     const [error, setError] = useState(null);
     const [image, setImage] = useState(null);
-    const {token} = useSelector(state => state.loginReducer);
+    const [disabled, setDisabled] = useState(false);
+    const {token, baseURL} = useSelector(state => state.loginReducer);
 
      const pullClient = async () => {
         await axios
-           .get(`invoice/payment/${orderId}`, {
+           .get(`${baseURL}/invoice/payment/${orderId}`, {
                headers: {
                    Accept: 'application/json',
-                   Authorization: `Bearer ${token}`
+                   Authorization: `Bearer ${token}`,
+                   timeout: 10000
                }
            })
            .then(res => {
                 if(res.status === 200 && res.data.form.items != null){
-                    setAmountExpected(res.data.form.items.total)
+                    
+                    const amountDiff = res.data.form.items.total - res.data.form.items.amount_paid
+                    setAmountApplied(amountDiff.toString())
+                    setAmountExpected(amountDiff)
+                    setClientType(res.data.form.client.credit_worthy)
+                    setTotal(amountDiff)
                     setForm(res.data.form)
                   
                 }
@@ -54,6 +64,20 @@ const PaymentScreen = ({navigation, route}) => {
                 }
            })
            .catch(err => console.error(err));
+    }
+
+    const checkTotal = () => {
+        if(amountApplied < total && clientType === 0){
+            setDisabled(true)
+            return setError("No credit Please")
+        }
+        else if(amountApplied > total) {
+            setDisabled(true)
+            return setError('Enter the exact amount!')
+        }
+        else {
+            setDisabled(false)
+        }
     }
 
     const numberFormatter = (number) => {
@@ -119,9 +143,10 @@ const PaymentScreen = ({navigation, route}) => {
     };
 
     const onSubmit = async () => {
+        setDisabled(true)
         let formData = new FormData();
         const items = [];
-         if(amountApplied === null || amountApplied <= 0){
+        if(amountApplied === null || amountApplied <= 0){
             return setError("Enter Amount Received")
         }
         else {
@@ -145,15 +170,16 @@ const PaymentScreen = ({navigation, route}) => {
             formData.append('items', JSON.stringify(items));
 
             await axios
-            .post("/invoice/payment", formData, {
+            .post(`${baseURL}/invoice/payment`, formData, {
                 headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
+                        timeout: 10000
                 }
             })
             .then(res => {
                 if(res.status === 200 && res.data){
                     ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
-                    navigation.navigate('Orders');
+                    navigation.pop('Orders');
                 }
             })
             .catch(err => console.error(err));
@@ -260,6 +286,7 @@ const PaymentScreen = ({navigation, route}) => {
                             defaultValue={amountApplied.toString()}
                             keyboardType="numeric"
                             textAlign="center"
+                            onBlur={checkTotal}
                         />
                         {error !== null && (<Text style={{ color: 'red'}}>{error}</Text>)}
                     </View>
@@ -290,8 +317,8 @@ const PaymentScreen = ({navigation, route}) => {
             </Card>
             <Card baseline borderRadius={0} marginH-s1>
                 <View spread horizontal row borderWidth={1} paddingH-s1>
-                    <View flex-4 borderRightWidth={0.5} paddingR-s1 right><Text marginV-s1 text80 uppercase style={{fontWeight: 'bold'}}>Total:</Text></View>
-                    <View flex-2 right centerV><Text text80 uppercase style={{fontWeight: 'bold'}}>{'\u20A6'}{numberFormatter(amountExpected)}</Text></View>
+                    <View flex-4 borderRightWidth={0.5} paddingR-s1 right><Text marginV-s1 text80 uppercase style={{fontWeight: 'bold'}}>Total Due:</Text></View>
+                    <View flex-2 right centerV><Text text80 uppercase style={{fontWeight: 'bold'}}>{'\u20A6'}{numberFormatter(total)}</Text></View>
                 </View>
             </Card>
             <Card baseline borderRadius={0} marginH-s1>
@@ -310,7 +337,7 @@ const PaymentScreen = ({navigation, route}) => {
                                     { text: "YES", onPress: () => onSubmit() }
                                 ])
                             }
-                        }} size={Button.sizes.small} label="POST PAYMENT"></Button>
+                        }} disabled={disabled ? true : false} size={Button.sizes.small} label="POST PAYMENT"></Button>
                     </View>
                 </View>
             </Card>

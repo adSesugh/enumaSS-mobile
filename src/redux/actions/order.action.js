@@ -1,7 +1,9 @@
-import axios from '../api'
+//import axios from '../api'
+import axios from 'axios'
 import {store} from '../store'
 import { 
   ORDER_REQUEST, ORDER_SUCCESS, ORDER_FAILED,
+  REQUEST, SUCCESS, FAILED,
   ORDER_DETAILS_REQUEST, ORDER_DETAILS_SUCCESS, ORDER_DETAILS_FAILED,
   CLIENT_SUCCESS, CLIENT_FAILED, POST_ORDER_SUCCESS, POST_ORDER_FAILED
 } from '../constants'
@@ -9,14 +11,15 @@ import {
 
 export const getOrders = () => {
 
-  const token = store.getState().loginReducer.token
+  const {token, baseURL } = store.getState().loginReducer
   const page = store.getState().orderReducer.page
   
   return async dispatch => {
       dispatch({type: ORDER_REQUEST})
-      await axios.get(`/orderList`, {
+      await axios.get(`${baseURL}/orderList`, {
           headers: {
-              Authorization: "Bearer "+token
+              Authorization: "Bearer "+token,
+              timeout: 10000
           }
       }).then((res) => {
         if(res.data && res.status === 200){
@@ -32,12 +35,13 @@ export const getOrders = () => {
 }
 
 export const getOrderDetails = (orderId) => {
-  const token = store.getState().loginReducer.token
+  const {token, baseURL } = store.getState().loginReducer
   return async dispatch => {
       dispatch({type: ORDER_DETAILS_REQUEST})
-      await axios.get(`/orderDetails/${orderId}`, {
+      await axios.get(`${baseURL}/orderDetails/${orderId}`, {
           headers: {
-              Authorization: "Bearer "+token
+              Authorization: "Bearer "+token,
+              timeout: 10000
           }
       }).then((res) => {
         if(res.data && res.status === 200){
@@ -53,13 +57,14 @@ export const getOrderDetails = (orderId) => {
 }
 
 export const postClient = (data) => {
-  const token = store.getState().loginReducer.token
+  const { token, baseURL } = store.getState().loginReducer
 
   return async dispatch => {
       dispatch({type: ORDER_REQUEST})
-      await axios.post('/client/store', data, {
+      await axios.post(`${baseURL}/client/store`, data, {
           headers: {
-              Authorization: "Bearer "+token
+              Authorization: "Bearer "+token,
+              timeout: 10000
           }
       }).then((res) => {
         if(res.data && res.status === 200){
@@ -78,12 +83,13 @@ export const postClient = (data) => {
 
 export const postOrder = (formData) => {
 
-  const token = store.getState().loginReducer.token
+  const { token, baseURL } = store.getState().loginReducer
   return async dispatch => {
       dispatch({type: ORDER_REQUEST})
-      await axios.post('/order/store', formData, {
+      await axios.post(`${baseURL}/order/store`, formData, {
           headers: {
-              Authorization: "Bearer "+token
+              Authorization: "Bearer "+token,
+              timeout: 10000
           }
       }).then((res) => {
         if(res.data && res.status === 200){

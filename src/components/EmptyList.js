@@ -3,7 +3,7 @@ import { View, Text, Colors } from 'react-native-ui-lib'
 
 const EmptyList = () => {
     return (
-        <View center useSafeArea bg-white>
+        <View flex justify-center center>
             <Text>List is empty!</Text>
         </View>
     )

@@ -4,7 +4,8 @@ import { ScrollView, FlatList, ToastAndroid, Alert } from 'react-native';
 import moment from 'moment';
 import { Button, Card, View, Text} from 'react-native-ui-lib';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from '../redux/api'
+//import axios from '../redux/api'
+import axios from 'axios';
 
 
 import { getOrderDetails } from '../redux/actions/order.action';
@@ -14,7 +15,7 @@ import Loader from '../components/Loader';
 const OrderDetailScreen = ({navigation, route}) => {
     const {orderId} = route.params;
     const dispatch = useDispatch();
-    const {token} = useSelector(state => state.loginReducer)
+    const {token, baseURL} = useSelector(state => state.loginReducer)
     const [disabled, setDisabled] = useState(false)
 
     const {details, loading, error } = useSelector(state => state.orderDetailReducer);
@@ -34,9 +35,10 @@ const OrderDetailScreen = ({navigation, route}) => {
 
     const _invoiceOrder = async (orderId) => {
         await axios
-          .get(`/invoice/store/${orderId}`, {
+          .get(`${baseURL}/invoice/store/${orderId}`, {
               headers: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${token}`,
+                  timeout: 10000
               }
           })
           .then(res => {
@@ -114,7 +116,7 @@ const OrderDetailScreen = ({navigation, route}) => {
                                 text: "CANCEL",
                             },
                             { text: "YES", onPress: () => navigation.navigate('Payment', {orderId: details?.id}) }
-                        ]) } disabled={details?.status_id === 8 ? false : disabled ? true : true} size={Button.sizes.small} label="PAY"></Button>
+                        ]) } disabled={(details?.status_id === 8 || details?.status_id === 10) ? false : disabled ? true : true} size={Button.sizes.small} label="PAY"></Button>
                     </View>
                 </View>
             </Card>

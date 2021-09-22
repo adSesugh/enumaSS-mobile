@@ -8,7 +8,7 @@ const initialState = {
   orders: [],
   page: 1,
   loading: false,
-  error: null
+  error: null,
 };
 
 const orderDetailsState = {

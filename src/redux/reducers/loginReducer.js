@@ -6,7 +6,7 @@ import {
 const initialState = {
   token: null,
   baseURL: null,
-  isAdmin: null,
+  user: null,
   loading: false,
   error: null
 };
@@ -16,7 +16,8 @@ const loginReducer = (state = initialState, action) => {
     case SET_BASEURL:
         return { 
             ...state,
-            baseURL: action.payload
+            baseURL: action.payload,
+            error: null
         };
 
     case LOGIN_REQUEST:
@@ -29,19 +30,19 @@ const loginReducer = (state = initialState, action) => {
         return { 
             ...state, 
             token: action.payload.token,
-            isAdmin: action.payload.isAdmin,
-            loading: false
+            user: action.payload.user,
+            loading: false,
+            error: null
         };
 
     case LOGIN_FAILED:
         return { 
             ...state,
             loading: false,
-            error: action.payload.errors
+            error: action.payload
         };
     
     case LOGOUT_SUCCESS:
-        console.log(action.payload)
         return { 
             ...state, 
             token: null,

@@ -25,7 +25,8 @@ import Loader from '../components/Loader'
 import CartItem from '../components/CartItem';
 import ToastMsg from '../components/ToastMsg';
 
-import axios from '../redux/api'
+//import axios from '../redux/api'
+import axios from 'axios';
 
 const actionSheetRef = createRef()
 const checkIcon = require('../../assets/icons/checkmark.png')
@@ -52,7 +53,7 @@ const NewOrderScreen = ({navigation}) => {
     const [xdisabled, setXDisabled] = useState(false)
     const { control, handleSubmit, reset, formState: { errors, isDirty, isValid } } = useForm()
     const { loading, msg, error } = useSelector(state => state.orderReducer)
-    const {token} = useSelector(state => state.loginReducer)
+    const {token, baseURL} = useSelector(state => state.loginReducer)
     const dispatch = useDispatch()
 
      useEffect(() => {
@@ -60,10 +61,11 @@ const NewOrderScreen = ({navigation}) => {
     }, [uoms, uom, unitPrice, priceType, product, cart, message])
 
     const formState = async () => { 
-        await axios.get("/makeOrder", {
+        await axios.get(`${baseURL}/makeOrder`, {
               headers: {
-                  Authorization: "Bearer "+token
-              }
+                  Authorization: "Bearer "+token,
+              },
+              timeout: 10000
           })
           .then(res => {
                 if(res.data && res.status === 200) {
@@ -78,10 +80,11 @@ const NewOrderScreen = ({navigation}) => {
 
     const getClient = async (item) => {
         const clientId = item.value
-        return await axios.get("/clientDetails?client_id="+clientId, {
+        return await axios.get(`${baseURL}/clientDetails?client_id=${clientId}`, {
               headers: {
-                  Authorization: "Bearer "+token
-              }
+                  Authorization: "Bearer "+token,
+              },
+              timeout: 10000
           })
           .then(res => {
             if(res.status === 200 && res.data !== undefined){
@@ -106,9 +109,10 @@ const NewOrderScreen = ({navigation}) => {
         setUom(null)
         setUnitPrice(0)
         const productId = item.value
-        return await axios.get("/productUom?product_id="+productId, {
+        return await axios.get(`${baseURL}/productUom?product_id=${productId}`, {
               headers: {
-                  Authorization: "Bearer "+token
+                  Authorization: "Bearer "+token,
+                  timeout: 10000
               }
           })
           .then(res => {
@@ -124,9 +128,10 @@ const NewOrderScreen = ({navigation}) => {
         const uomId = item.value
         const priceTypeId = priceType?.value ? priceType?.value : 1
 
-        await axios.get(`/itemPrice?product_id=${productId}&uom_id=${uomId}&priceType_id=${priceTypeId}`, {
+        await axios.get(`${baseURL}/itemPrice?product_id=${productId}&uom_id=${uomId}&priceType_id=${priceTypeId}`, {
               headers: {
-                  Authorization: "Bearer "+token
+                  Authorization: "Bearer "+token,
+                  timeout: 10000
               }
           })
           .then(res => {
@@ -161,9 +166,10 @@ const NewOrderScreen = ({navigation}) => {
     const addToCart = async () => {
         setSpinner(true);
         await axios
-          .get(`/qtyCheck?product_id=${product?.value}&uom_id=${uom?.value}&qty=${qty}`, {
+          .get(`${baseURL}/qtyCheck?product_id=${product?.value}&uom_id=${uom?.value}&qty=${qty}`, {
                headers: {
-                    Authorization: "Bearer "+token
+                    Authorization: "Bearer "+token,
+                    timeout: 10000
               }
           })
           .then((res) => {
@@ -226,9 +232,10 @@ const NewOrderScreen = ({navigation}) => {
         const orderTotal = totalSum();
 
         await axios
-          .get(`/orderEligibility?client_id=${client?.value}&orderTotal=${orderTotal}`, {
+          .get(`${baseURL}/orderEligibility?client_id=${client?.value}&orderTotal=${orderTotal}`, {
               headers: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${token}`,
+                  timeout: 10000
               }
           })
           .then(res => {

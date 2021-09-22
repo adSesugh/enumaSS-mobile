@@ -1,10 +1,11 @@
-import axios from 'axios'
-import {store} from '../store'
+import React from 'react';
+import axios from 'axios';
+import {store} from '../store';
 
 const baseUrl = store.getState().loginReducer.baseURL;
 
 const instance = axios.create({
-    baseURL: baseUrl,
+    baseURL: `${baseUrl}`,
     timeout: 10000
 })
 

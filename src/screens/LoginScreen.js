@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Alert, Image, TextInput, StyleSheet} from 'react-native'
+import {Alert, Image, TextInput, ToastAndroid, StyleSheet} from 'react-native'
 import { Card, Colors, View, Text, Button, Switch, TextField} from 'react-native-ui-lib'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useForm, Controller } from 'react-hook-form'
@@ -7,7 +7,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { userLogin, saveBaseURL } from '../redux/actions/login.action'
 import {Ionicons, AntDesign} from '@expo/vector-icons'
 import Loader from '../components/Loader'
-import ToastMsg from '../components/ToastMsg'
 
 import Logo from '../../assets/ess.png'
 
@@ -15,8 +14,6 @@ const LoginScreen = () => {
     const { control, handleSubmit, formState: { errors, isDirty, isValid } } = useForm()
     const { token, user, loading, error } = useSelector(state => state.loginReducer)
     const dispatch = useDispatch()
-    const [message, setMessage] = useState(error)
-    const [openDialog, setOpenDialog] = useState(false)
     const [urlState, setUrlState] = useState(false)
 
     const baseURL = (value) => {
@@ -82,7 +79,7 @@ const LoginScreen = () => {
                             />
                             <View spread row marginT-s2>
                                 <View right flex-2>
-                                    <Text text80 white>Local</Text>
+                                    {/* <Text text80 white uppercase>Local</Text> */}
                                 </View>
                                <View flex-2 center>
                                     <Switch
@@ -96,13 +93,13 @@ const LoginScreen = () => {
                                     />
                                </View>
                                 <View flex-2 left>
-                                    <Text text80 white>Online</Text>
+                                    {/* <Text text80 white uppercase>Online</Text> */}
                                 </View>
                             </View>
                             <Button style={styles.button} label="Let's Go" onPress={handleSubmit(onSubmit)} iconOnRight={<AntDesign name="login" color="white" size="20" />} />
                         </Card>
                     </View>
-                    <ToastMsg openDialog={openDialog} message={message} msg={null} setOpenDialog={setOpenDialog} />
+                    {error && ToastAndroid.show(error, ToastAndroid.SHORT)}
                 </LinearGradient>    
             )}
         </>

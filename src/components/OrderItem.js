@@ -1,12 +1,14 @@
 import React from 'react'
 import moment from 'moment';
-import PropTypes from 'prop-types';
+import 'intl';
+import 'intl/locale-data/jsonp/en';
 import {StyleSheet, Alert, ToastAndroid} from 'react-native';
 import {View as AnimatableView} from 'react-native-animatable';
 import {AnimatableManager, Chip, Colors, Spacings, ListItem, Text, Avatar, AvatarHelper, Drawer, Button } from 'react-native-ui-lib';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux'
-import axios from '../redux/api'
+// axios from '../redux/api'
+import axios from 'axios';
 
 const collectionsIcon = require('../../assets/icons/collections.png');
 const starIcon = require('../../assets/icons/star.png');
@@ -17,12 +19,12 @@ const OrderItem = ({ item, index, addRef }) => {
 
     const navigation = useNavigation()
     const between = (x, min, max) => x >= min && x <= max
-    const avatarBadgeProps = {backgroundColor: between(item.status_id, 1,4) ? Colors.yellow20 : between(item.status_id, 9, 10) ? Colors.green20 : Colors.blue20};
+    const avatarBadgeProps = {backgroundColor: between(item.status_id, 1,4) ? Colors.yellow20 : item.status_id === 9 ? Colors.green20 : item.status_id === 8 ? Colors.blue20 : Colors.dark50};
     const buttonPress = () => Alert.alert('Badge button press');
-    const listOnPress = () => navigation.navigate('OrderDetail', {orderId: item.id});
+    const listOnPress = () => navigation.push('OrderDetail', {orderId: item.id});
     const imageSource = item.thumbnail ? {uri: item.thumbnail} : null;
     const animationProps = AnimatableManager.getEntranceByIndex(item.id)
-    const {token} = useSelector(state => state.loginReducer)
+    const {token, baseURL} = useSelector(state => state.loginReducer)
 
     const styles = StyleSheet.create({
         border: {
@@ -32,7 +34,7 @@ const OrderItem = ({ item, index, addRef }) => {
         },
         avatar: {
             marginHorizontal: 4,
-            backgroundColor: between(item.status_id, 1,4) ? Colors.yellow20 : between(item.status_id, 9, 10) ? Colors.green20 : Colors.blue20,
+            backgroundColor: between(item.status_id, 1,4) ? Colors.yellow20 : item.status_id === 9 ? Colors.green20 : item.status_id === 8 ? Colors.blue20 : Colors.dark50,
             color: Colors.dark80,
         },
         middle: {
@@ -53,14 +55,16 @@ const OrderItem = ({ item, index, addRef }) => {
 
     const _invoiceOrder = async (orderId) => {
         await axios
-          .get(`/invoice/store/${orderId}`, {
+          .get(`${baseURL}/invoice/store/${orderId}`, {
               headers: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${token}`,
+                  timeout: 10000,
               }
           })
           .then(res => {
                 if(res.status === 200) {
                     ToastAndroid.show("Order Invoiced successfully!", ToastAndroid.SHORT);
+                    navigation.pop('Orders')
                 }
           })
           .catch(err => console.error(err));
@@ -87,7 +91,7 @@ const OrderItem = ({ item, index, addRef }) => {
                 {
                     text: "CANCEL"
                 },
-                { text: "YES", onPress: () => navigation.navigate('Payment', {orderId: item.id}) }
+                { text: "YES", onPress: () => navigation.push('Payment', {orderId: item.id}) }
             ])
         },
     ];
@@ -96,7 +100,7 @@ const OrderItem = ({ item, index, addRef }) => {
         <AnimatableView {...animationProps}>
             <Drawer
                 leftItem={item.status_id === 3 ? leftButton : {background: Colors.blue20}}
-                rightItems={item.status_id === 8 ? rightButtons : []}
+                rightItems={(item.status_id === 8 || item.status_id === 10) ? rightButtons : []}
                 ref={r => addRef(r, index)}
                 key={Date.now()}
                 index={index}
@@ -128,17 +132,23 @@ const OrderItem = ({ item, index, addRef }) => {
                                         labelStyle={{color: Colors.white}}
                                         containerStyle={{borderColor: Colors.dark70, backgroundColor: Colors.yellow20, marginLeft: Spacings.s1}}
                                     />
-                                ) : between(item.status_id, 9, 10) ? (
+                                ) : item.status_id === 9 ? (
                                     <Chip
                                         label={moment(item.created_at).format('Y-MMM-D')}
                                         labelStyle={{color: Colors.white}}
                                         containerStyle={{borderColor: Colors.dark70, backgroundColor: Colors.green20, marginLeft: Spacings.s1}}
                                     />
-                                ) : (
+                                ) : item.status_id === 8 ? (
                                     <Chip
                                         label={moment(item.created_at).format('Y-MMM-D')}
                                         labelStyle={{color: Colors.white}}
                                         containerStyle={{borderColor: Colors.dark70, backgroundColor: Colors.blue20, marginLeft: Spacings.s1}}
+                                    />
+                                ): (
+                                    <Chip
+                                        label={moment(item.created_at).format('Y-MMM-D')}
+                                        labelStyle={{color: Colors.white}}
+                                        containerStyle={{borderColor: Colors.dark70, backgroundColor: Colors.dark50, marginLeft: Spacings.s1}}
                                     />
                                 )}
                             </Text>

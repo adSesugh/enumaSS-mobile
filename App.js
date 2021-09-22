@@ -3,10 +3,22 @@ import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-status-bar';
 import { Colors} from 'react-native-ui-lib'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { saveBaseURL } from './src/redux/actions/login.action'
+import { useDispatch } from 'react-redux'
 
 import Navigation from './src/navigation'
 
 export default function App() {
+  const dispatch = useDispatch();
+  
+  const baseURL = (value) => {
+        dispatch(saveBaseURL(value))
+  }
+
+  useEffect(()=> {
+      baseURL(false)
+  }, [])
+
   // const checkForNewVersion = async() => {
   //   try {
   //     const update = await Updates.checkForUpdateAsync()

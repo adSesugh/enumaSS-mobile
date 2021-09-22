@@ -1,24 +1,20 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import {FlatList, Dimensions, RefreshControl} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import { getOrders } from '../redux/actions/order.action';
-import Loader from '../components/Loader';
-import EmptyList from '../components/EmptyList';
-import OrderItem from '../components/OrderItem';
 import {View, Text} from 'react-native-ui-lib';
 import { useFocusEffect } from '@react-navigation/native';
 
-const OrderScreen = () => {
+import { getPickups } from '../redux/actions/misc.action';
+import Loader from '../components/Loader';
+import EmptyList from '../components/EmptyList';
+import ItemList from '../components/ItemList';
+
+const PickupScreen = () => {
     const dispatch = useDispatch();
-    const {loading, orders, error} = useSelector(state => state.orderReducer)
-    const refArray = new Array();
+    const {loading, pickups, error} = useSelector(state => state.pickupReducer)
     const isMounted = useRef(false);
 
-    const _loadData = async () => await dispatch(getOrders());
-
-    // useEffect(() => {
-    //     _loadData()
-    // }, [])
+    const _loadData = async () => await dispatch(getPickups());
 
     useFocusEffect(
         useCallback(() => {
@@ -34,41 +30,37 @@ const OrderScreen = () => {
         }, [])
     );
 
-    const addRef = (ref, index) => {
-        refArray[index] = ref;
-    }
-
-    const onEndReached = async () => {
-        return await dispatch(getOrders());
-    }
-
     const renderItem = ({item, index}) => {
-        return <OrderItem item={item} index={index} addRef={addRef} />
+        return <ItemList 
+            id={item.id} 
+            name={item.client.person}
+            location={item.location.store_name}
+            amount={item.total}
+            createdAt={item.created_at}
+            onPress={() => navigation.push('OrderDetails', {orderId: item.id})}   
+            index={index} 
+        />
     }
 
     const keyExtractor = (item, index) => `${item.id}-${index}`;
 
-    if (Object.keys(orders).length === 0) {
-        if (loading) {
-            return <Loader />
-        }
+    if (loading) {
+        return <Loader />
+    }
 
-        if (error) {
-            return (
-                <View flex center>
-                    <Text>Connectivity Issue!</Text>
-                </View>
-            )
-        }
+    if (error) {
+        return (
+            <View flex center>
+                <Text>{error}!</Text>
+            </View>
+        )
     }
 
     return (
         <FlatList
-            data={orders}
+            data={pickups}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            //onEndReached={onEndReached}
-            //onEndReachedThreshold={0.5}
             ListEmptyComponent={<EmptyList />}
             refreshControl={
                 <RefreshControl
@@ -80,4 +72,4 @@ const OrderScreen = () => {
     )
 }
 
-export default OrderScreen
+export default PickupScreen
