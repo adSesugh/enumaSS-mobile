@@ -4,14 +4,14 @@ import { DASHBOARD_REQUEST, DASHBOARD_SUCCESS, DASHBOARD_FAILED } from '../const
 import {store} from '../store'
 
 export const userDashboard = () => {
-    const baseUrl = store.getState().loginReducer.baseURL;
+    const {baseURL, server, token} = store.getState().loginReducer;
     return async dispatch => {
         dispatch({type: DASHBOARD_REQUEST})
-        await axios.get(`${baseUrl}/homie`, {
+        await axios.get(`${baseURL}/homie`, {
             headers: {
-                Authorization: "Bearer "+store.getState().loginReducer.token,
-                timeout: 10000
-            }
+                Authorization: "Bearer "+token,
+            }, 
+            timeout: 10000
         }).then((res) => {
             if(res.data && res.status === 200){
             dispatch({
@@ -20,8 +20,18 @@ export const userDashboard = () => {
             })
             }
         }).catch(err => {
-            console.log(err.payload)
-            dispatch({type: DASHBOARD_FAILED, payload: err.payload.data})
+            dispatch({type: DASHBOARD_FAILED, payload: () => {
+                    if(err.message.includes('timeout')){
+                        return `${server} server cannot be reached! Please try again or change server.`
+                    }
+                    else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+                        return `Invalid Token on ${server} server! Please try again or change server.`
+                    }
+                    else {
+                        return `Something wnt wrong on ${server} server! Contact Administrator`
+                    }
+                } 
+            })
         })
     }
 }

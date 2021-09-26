@@ -28,7 +28,7 @@ const receivableReducer = (state = initialState, action) => {
             return { 
                 ...state,
                 loading: false,
-                error: action.payload.error
+                error: action.payload()
             };
         
         default:

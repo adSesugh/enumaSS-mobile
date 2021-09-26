@@ -1,4 +1,5 @@
 import React, {useCallback, useState} from 'react'
+import { Alert } from 'react-native'
 import { AvatarHelper, Avatar, Card, Colors, Image, View, Text, Button} from 'react-native-ui-lib'
 import moment from 'moment'
 import { useSelector, useDispatch } from 'react-redux'
@@ -193,6 +194,13 @@ const ProfileScreen = ({navigation, route}) => {
                     </>
                 </View>
             )}
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
+            }
         </>
     )
 }

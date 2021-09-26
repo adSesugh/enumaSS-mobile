@@ -16,25 +16,31 @@ export const getReservedOrders = () => {
   
   return async dispatch => {
     dispatch({type: RESERVED_REQUEST})
-    const res = await axios.get(`${baseURL}/reservedList`, {
+    await axios.get(`${baseURL}/reservedList`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: RESERVED_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: RESERVED_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: RESERVED_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: RESERVED_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -45,25 +51,31 @@ export const getReceivables = () => {
   
   return async dispatch => {
     dispatch({type: RECEIVABLE_REQUEST})
-    const res = await axios.get(`${baseURL}/receivableList`, {
+    await axios.get(`${baseURL}/receivableList`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: RECEIVABLE_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: RECEIVABLE_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: RECEIVABLE_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: RECEIVABLE_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -73,25 +85,31 @@ export const getPickups = () => {
   
   return async dispatch => {
     dispatch({type: PICKUP_REQUEST})
-    const res = await axios.get(`${baseURL}/pickupList`, {
+    await axios.get(`${baseURL}/pickupList`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: PICKUP_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: PICKUP_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: PICKUP_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: PICKUP_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -99,26 +117,31 @@ export const getPayments = () => {
   const {token, baseURL } = store.getState().loginReducer
   return async dispatch => {
     dispatch({type: PAYMENTS_REQUEST})
-    const res = await axios.get(`${baseURL}/paymentList`, {
+    await axios.get(`${baseURL}/paymentList`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: PAYMENTS_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: PAYMENTS_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      console.log(res.data)
-      dispatch({
-        type: PAYMENTS_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: PAYMENTS_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -126,29 +149,35 @@ export const getClientList = () => {
 
   const {token, baseURL } = store.getState().loginReducer
   const page = store.getState().customersReducer.page
-  console.log(page)
+
   return async dispatch => {
     dispatch({type: CUSTOMER_REQUEST})
     dispatch({type: CLIENT_RESET})
-    const res = await axios.get(`${baseURL}/clientList?page=${page}`, {
+    await axios.get(`${baseURL}/clientList?page=${page}`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {  
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: CUSTOMER_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: CUSTOMER_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: CUSTOMER_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: CUSTOMER_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -158,25 +187,31 @@ export const getMoreClient = () => {
   const page = store.getState().customersReducer.page
   
   return async dispatch => {
-    const res = await axios.get(`${baseURL}/clientList?page=${page}`, {
+    await axios.get(`${baseURL}/clientList?page=${page}`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: CUSTOMER_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: CUSTOMER_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: CUSTOMER_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: CUSTOMER_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -187,25 +222,31 @@ export const getProductList = () => {
   
   return async dispatch => {
     dispatch({type: PRODUCT_REQUEST})
-    const res = await axios.get(`${baseURL}/productList?page=${page}`, {
+    await axios.get(`${baseURL}/productList?page=${page}`, {
           headers: {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: PRODUCT_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: PRODUCT_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: PRODUCT_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: PRODUCT_FAILED,
-        payload: res.data
-      })
-    }
   }
 }
 
@@ -220,19 +261,25 @@ export const getMoreProduct = () => {
               Authorization: "Bearer "+token
           },
           timeout: 10000
+      }).then((res) => {
+        if(res.data && res.status === 200) {
+          dispatch({
+            type: PRODUCT_SUCCESS,
+            payload: res.data
+          })
+        }
+      }).catch(err => {
+        dispatch({type: PRODUCT_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
       });
-
-    if(res.data && res.status === 200) {
-      dispatch({
-        type: PRODUCT_SUCCESS,
-        payload: res.data
-      })
-    }
-    else if(res.status === 403) {
-      dispatch({
-        type: PRODUCT_FAILED,
-        payload: res.data
-      })
-    }
   }
 }

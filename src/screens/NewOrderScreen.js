@@ -112,8 +112,8 @@ const NewOrderScreen = ({navigation}) => {
         return await axios.get(`${baseURL}/productUom?product_id=${productId}`, {
               headers: {
                   Authorization: "Bearer "+token,
-                  timeout: 10000
-              }
+              },
+              timeout: 10000
           })
           .then(res => {
               setUoms(res.data.results)
@@ -130,9 +130,9 @@ const NewOrderScreen = ({navigation}) => {
 
         await axios.get(`${baseURL}/itemPrice?product_id=${productId}&uom_id=${uomId}&priceType_id=${priceTypeId}`, {
               headers: {
-                  Authorization: "Bearer "+token,
-                  timeout: 10000
-              }
+                    Authorization: "Bearer "+token,
+                },
+                timeout: 10000
           })
           .then(res => {
               if(res.data.price !== 0) {
@@ -168,9 +168,9 @@ const NewOrderScreen = ({navigation}) => {
         await axios
           .get(`${baseURL}/qtyCheck?product_id=${product?.value}&uom_id=${uom?.value}&qty=${qty}`, {
                headers: {
-                    Authorization: "Bearer "+token,
-                    timeout: 10000
-              }
+                    Authorization: "Bearer "+token
+              },
+              timeout: 10000
           })
           .then((res) => {
                 dispatch({type: 'QTY_CHECK'})
@@ -234,9 +234,9 @@ const NewOrderScreen = ({navigation}) => {
         await axios
           .get(`${baseURL}/orderEligibility?client_id=${client?.value}&orderTotal=${orderTotal}`, {
               headers: {
-                  Authorization: `Bearer ${token}`,
-                  timeout: 10000
-              }
+                    Authorization: `Bearer ${token}`,
+                },
+                timeout: 10000
           })
           .then(res => {
               if(res.status === 200 && res.data.results){
@@ -246,7 +246,7 @@ const NewOrderScreen = ({navigation}) => {
                     setDisabled(false)
                     setXDisabled(false)
 
-                    navigation.navigate('Orders');
+                    navigation.goBack();
               }
               else {
                   setMessage(res.data.message)
@@ -493,6 +493,13 @@ const NewOrderScreen = ({navigation}) => {
                     <ToastMsg openDialog={openDialog} msg={msg} message={message} setOpenDialog={setOpenDialog} />
                 </View>
             )}
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
+            }
         </>
     )
 }

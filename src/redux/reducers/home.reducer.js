@@ -25,7 +25,7 @@ const homeReducer = (state = initialState, action) => {
         return { 
             ...state,
             loading: false,
-            error: action.payload.errors
+            error: action.payload()
         };
     default:
       return state;

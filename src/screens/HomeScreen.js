@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react'
-import {ScrollView} from 'react-native';
+import {Alert, ScrollView} from 'react-native';
 import { Card, Colors, View, Text, Button} from 'react-native-ui-lib'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useDispatch, useSelector } from 'react-redux'
@@ -169,6 +169,13 @@ const HomeScreen = () => {
                     )}
                 </ScrollView>
             </View>
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
+            }
         </View>
     )
 }

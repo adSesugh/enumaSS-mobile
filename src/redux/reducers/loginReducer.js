@@ -1,11 +1,12 @@
 import { 
-    LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILED,
+    LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILED, RESET_LOGIN, RESET_ERROR,
     LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED, SET_BASEURL
  } from '../constants'
 
 const initialState = {
   token: null,
   baseURL: null,
+  server: null,
   user: null,
   loading: false,
   error: null
@@ -16,7 +17,8 @@ const loginReducer = (state = initialState, action) => {
     case SET_BASEURL:
         return { 
             ...state,
-            baseURL: action.payload,
+            baseURL: action.payload.url,
+            server: action.payload.server,
             error: null
         };
 
@@ -39,7 +41,7 @@ const loginReducer = (state = initialState, action) => {
         return { 
             ...state,
             loading: false,
-            error: action.payload
+            error: action.payload()
         };
     
     case LOGOUT_SUCCESS:
@@ -53,6 +55,21 @@ const loginReducer = (state = initialState, action) => {
         return { 
             ...state,
             loading: false
+        };
+
+    case RESET_LOGIN:
+        return { 
+            ...state, 
+            token: null,
+            loading: false,
+            error: null
+        };
+    case RESET_ERROR:
+        return { 
+            ...state, 
+            token: null,
+            loading: false,
+            error: null
         };
     default:
       return state;

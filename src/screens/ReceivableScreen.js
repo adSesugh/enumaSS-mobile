@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react';
-import {FlatList, Dimensions, RefreshControl} from 'react-native';
+import {Alert, FlatList, Dimensions, RefreshControl} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {View, Text} from 'react-native-ui-lib';
 import { useFocusEffect } from '@react-navigation/native';
@@ -62,23 +62,32 @@ const ReceivableScreen = () => {
     }
 
     return (
-        <FlatList
-            data={receivables}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            ListEmptyComponent={<EmptyList />}
-            ListHeaderComponent={() => {
-                return (
-                    <ListHeader total={total()} label='Total Receivables' />
-                )
-            }}
-            refreshControl={
-                <RefreshControl
-                    refreshing={loading}
-                    onRefresh={() => _loadData()}
-                />
+        <>
+            <FlatList
+                data={receivables}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+                ListEmptyComponent={<EmptyList />}
+                ListHeaderComponent={() => {
+                    return (
+                        <ListHeader total={total()} label='Total Receivables' />
+                    )
+                }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={loading}
+                        onRefresh={() => _loadData()}
+                    />
+                }
+            />
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
             }
-        />
+        </>
     )
 }
 

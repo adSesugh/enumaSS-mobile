@@ -29,7 +29,7 @@ const productReducer = (state = initialState, action) => {
             return { 
                 ...state,
                 loading: false,
-                error: action.payload.error
+                error: action.payload()
             };
 
         case PRODUCT_RESET:

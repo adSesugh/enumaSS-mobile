@@ -29,7 +29,17 @@ export const getOrders = () => {
           })
         }
       }).catch(err => {
-        dispatch({type: ORDER_FAILED, payload: err.payload.data})
+        dispatch({type: ORDER_FAILED, payload: ()=> {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
     })
   }
 }
@@ -41,8 +51,8 @@ export const getOrderDetails = (orderId) => {
       await axios.get(`${baseURL}/orderDetails/${orderId}`, {
           headers: {
               Authorization: "Bearer "+token,
-              timeout: 10000
-          }
+          },
+          timeout: 10000
       }).then((res) => {
         if(res.data && res.status === 200){
           dispatch({
@@ -51,7 +61,17 @@ export const getOrderDetails = (orderId) => {
           })
         }
       }).catch(err => {
-        dispatch({type: ORDER_DETAILS_FAILED, payload: err.payload.data})
+        dispatch({type: ORDER_DETAILS_FAILED, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
     })
   }
 }
@@ -64,8 +84,8 @@ export const postClient = (data) => {
       await axios.post(`${baseURL}/client/store`, data, {
           headers: {
               Authorization: "Bearer "+token,
-              timeout: 10000
-          }
+          },
+          timeout: 10000
       }).then((res) => {
         if(res.data && res.status === 200){
           dispatch({
@@ -75,8 +95,17 @@ export const postClient = (data) => {
           })
         }
       }).catch(err => {
-        console.log(err)
-        dispatch({type: CLIENT_FAILED, loading: false, payload: err.payload.data})
+        dispatch({type: CLIENT_FAILED, loading: false, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
     })
   }
 }
@@ -89,8 +118,8 @@ export const postOrder = (formData) => {
       await axios.post(`${baseURL}/order/store`, formData, {
           headers: {
               Authorization: "Bearer "+token,
-              timeout: 10000
-          }
+          },
+          timeout: 10000
       }).then((res) => {
         if(res.data && res.status === 200){
           dispatch({
@@ -101,7 +130,17 @@ export const postOrder = (formData) => {
         }
       }).catch(err => {
         console.log(err)
-        dispatch({type: POST_ORDER_FAILED, loading: false, payload: err.payload})
+        dispatch({type: POST_ORDER_FAILED, loading: false, payload: () => {
+          if(err.message.includes('timeout')){
+              return `${server} server cannot be reached! Please try again or change server.`
+          }
+          else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+              return `Invalid Token on ${server} server! Please try again or change server.`
+          }
+          else {
+              return `Something wnt wrong on ${server} server! Contact Administrator`
+          }
+        }})
     })
   }
 }

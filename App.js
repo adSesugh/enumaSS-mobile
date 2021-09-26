@@ -4,19 +4,22 @@ import * as Updates from 'expo-status-bar';
 import { Colors} from 'react-native-ui-lib'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { saveBaseURL } from './src/redux/actions/login.action'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Navigation from './src/navigation'
 
 export default function App() {
   const dispatch = useDispatch();
+  const { token } = useSelector(state => state.loginReducer);
   
   const baseURL = (value) => {
         dispatch(saveBaseURL(value))
   }
 
   useEffect(()=> {
+    if(!token) {
       baseURL(false)
+    }
   }, [])
 
   // const checkForNewVersion = async() => {

@@ -41,8 +41,8 @@ const PaymentScreen = ({navigation, route}) => {
                headers: {
                    Accept: 'application/json',
                    Authorization: `Bearer ${token}`,
-                   timeout: 10000
-               }
+               },
+               timeout: 10000
            })
            .then(res => {
                 if(res.status === 200 && res.data.form.items != null){
@@ -60,7 +60,7 @@ const PaymentScreen = ({navigation, route}) => {
                     navigation.navigate('Orders')
                 }
                 else if(res.status === 404) {
-                   console.log(res)
+                   //console.log(res)
                 }
            })
            .catch(err => console.error(err));
@@ -172,14 +172,14 @@ const PaymentScreen = ({navigation, route}) => {
             await axios
             .post(`${baseURL}/invoice/payment`, formData, {
                 headers: {
-                        Authorization: `Bearer ${token}`,
-                        timeout: 10000
-                }
+                        Authorization: `Bearer ${token}`
+                },
+                timeout: 10000
             })
             .then(res => {
                 if(res.status === 200 && res.data){
                     ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
-                    navigation.pop('Orders');
+                    navigation.navigate('Orders');
                 }
             })
             .catch(err => console.error(err));
@@ -341,6 +341,13 @@ const PaymentScreen = ({navigation, route}) => {
                     </View>
                 </View>
             </Card>
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
+            }
         </View>
     )
 }

@@ -12,7 +12,7 @@ import Logo from '../../assets/ess.png'
 
 const LoginScreen = () => {
     const { control, handleSubmit, formState: { errors, isDirty, isValid } } = useForm()
-    const { token, user, loading, error } = useSelector(state => state.loginReducer)
+    const { server, token, user, loading, error } = useSelector(state => state.loginReducer)
     const dispatch = useDispatch()
     const [urlState, setUrlState] = useState(false)
 
@@ -99,7 +99,13 @@ const LoginScreen = () => {
                             <Button style={styles.button} label="Let's Go" onPress={handleSubmit(onSubmit)} iconOnRight={<AntDesign name="login" color="white" size="20" />} />
                         </Card>
                     </View>
-                    {error && ToastAndroid.show(error, ToastAndroid.SHORT)}
+                    {error && Alert.alert('Oops! Error', error, [
+                            {
+                                text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                            },
+                            { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                        ])
+                    }
                 </LinearGradient>    
             )}
         </>

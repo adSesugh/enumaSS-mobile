@@ -38,12 +38,13 @@ const OrderDetailScreen = ({navigation, route}) => {
           .get(`${baseURL}/invoice/store/${orderId}`, {
               headers: {
                   Authorization: `Bearer ${token}`,
-                  timeout: 10000
-              }
+                },
+                timeout: 10000
           })
           .then(res => {
                 if(res.status === 200) {
                     ToastAndroid.show("Order Invoiced successfully!", ToastAndroid.SHORT);
+                    navigation.goBack()
                 }
           })
           .catch(err => console.error(err));
@@ -120,6 +121,13 @@ const OrderDetailScreen = ({navigation, route}) => {
                     </View>
                 </View>
             </Card>
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
+            }
         </View>
     )
 }

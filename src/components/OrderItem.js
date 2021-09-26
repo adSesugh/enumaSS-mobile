@@ -58,13 +58,13 @@ const OrderItem = ({ item, index, addRef }) => {
           .get(`${baseURL}/invoice/store/${orderId}`, {
               headers: {
                   Authorization: `Bearer ${token}`,
-                  timeout: 10000,
-              }
+              },
+              timeout: 10000
           })
           .then(res => {
                 if(res.status === 200) {
                     ToastAndroid.show("Order Invoiced successfully!", ToastAndroid.SHORT);
-                    navigation.pop('Orders')
+                    navigation.navigate('Orders')
                 }
           })
           .catch(err => console.error(err));

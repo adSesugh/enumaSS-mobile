@@ -11,8 +11,8 @@ export const userProfile = () => {
         const res = await axios.get(`${baseURL}/me`, {
             headers: {
                 Authorization: "Bearer "+token,
-                timeout: 10000
-            }
+            },
+            timeout: 10000
         });
         
         if (res.data && res.status === 200) {
@@ -21,11 +21,20 @@ export const userProfile = () => {
             payload: res.data
             });
         } else {
-            console.log(res.error)
             dispatch({type: PROFILE_FAILED, payload: res.error})
         }
     };
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    dispatch({type: PRODUCT_FAILED, payload: () => {
+      if(err.message.includes('timeout')){
+          return `${server} server cannot be reached! Please try again or change server.`
+      }
+      else if(err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')){
+          return `Invalid Token on ${server} server! Please try again or change server.`
+      }
+      else {
+          return `Something wnt wrong on ${server} server! Contact Administrator`
+      }
+    }})
   }
 }

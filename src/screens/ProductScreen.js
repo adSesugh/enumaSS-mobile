@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import {FlatList, Dimensions, RefreshControl} from 'react-native';
+import {Alert, FlatList, Dimensions, RefreshControl} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Card, Text, Image, ListItem, Chip, Colors, Spacings, View, ExpandableSection, Switch} from 'react-native-ui-lib';
 import { useFocusEffect } from '@react-navigation/native';
@@ -147,23 +147,32 @@ const ProductScreen = ({navigation}) => {
     }
 
     return (
-        <FlatList
-            data={products}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            ListEmptyComponent={<EmptyList />}
-            onEndReached={_loadMoreProdut}
-            onEndReachedThreshold={0.5}
-            refreshControl={
-                <RefreshControl
-                    refreshing={loading}
-                    onRefresh={() => {
-                        dispatch({type: 'PRODUCT_RESET'})
-                        _loadData()
-                    }}
-                />
+        <>
+            <FlatList
+                data={products}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+                ListEmptyComponent={<EmptyList />}
+                onEndReached={_loadMoreProdut}
+                onEndReachedThreshold={0.5}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={loading}
+                        onRefresh={() => {
+                            dispatch({type: 'PRODUCT_RESET'})
+                            _loadData()
+                        }}
+                    />
+                }
+            />
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
             }
-        />
+        </>
     )
 }
 

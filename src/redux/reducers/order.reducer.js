@@ -40,7 +40,7 @@ export const orderReducer = (state = initialState, action) => {
         return { 
             ...state,
             loading: false,
-            error: action.payload.errors
+            error: action.payload()
         };
     
     case ORDER_RESET:

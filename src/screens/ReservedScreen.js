@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react';
-import {FlatList, Dimensions, RefreshControl} from 'react-native';
+import {Alert, FlatList, Dimensions, RefreshControl} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import { getReservedOrders } from '../redux/actions/misc.action';
 import Loader from '../components/Loader';
@@ -48,18 +48,27 @@ const ReservedScreen = () => {
     }
 
     return (
-        <FlatList
-            data={reserved}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            ListEmptyComponent={<EmptyList />}
-            refreshControl={
-                <RefreshControl
-                    refreshing={loading}
-                    onRefresh={() => _loadData()}
-                />
+        <>
+            <FlatList
+                data={reserved}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+                ListEmptyComponent={<EmptyList />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={loading}
+                        onRefresh={() => _loadData()}
+                    />
+                }
+            />
+            {error && Alert.alert('Oops! Error', error, [
+                    {
+                        text: "TRY AGAIN", onPress: () => dispatch({type: 'RESET_ERROR'})
+                    },
+                    { text: "CHANGE SERVER", onPress: () => dispatch({type: 'RESET_LOGIN'}) }
+                ])
             }
-        />
+        </>
     )
 }
 
